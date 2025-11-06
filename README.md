@@ -38,3 +38,22 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ## References
 
 - [YouTube](https://www.youtube.com/watch?v=ED2H_y6dmC8&)
+- [Current Process](https://youtu.be/ED2H_y6dmC8?si=mnlnBayFpnPui7TP&t=2468)
+
+## Technologies
+
+- [Next.js](https://nextjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [shadcn](https://ui.shadcn.com/)
+- [prisma](https://www.prisma.io/)
+- [neon](https://neon.com/)
+
+## Commands
+
+### Prisma
+
+- Reset database
+```shell
+pnpm prisma migrate reset
+```

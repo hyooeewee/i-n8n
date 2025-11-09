@@ -3,6 +3,7 @@ import prisma from "@/lib/db";
 import {
   baseProcedure,
   createTRPCRouter,
+  premiumProcedure,
   protectedProcedure,
 } from "@/trpc/init";
 import z from "zod";
@@ -42,7 +43,7 @@ export const appRouter = createTRPCRouter({
       message: "Job queued",
     };
   }),
-  testAI: baseProcedure.mutation(async () => {
+  testAI: premiumProcedure.mutation(async () => {
     await inngest.send({
       name: "execute/ai",
     });

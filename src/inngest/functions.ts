@@ -6,7 +6,7 @@ import { inngest } from "./client";
 
 const zhipu = createOpenAI({
   baseURL: "https://open.bigmodel.cn/api/paas/v4/",
-  apiKey: "cb54214044294512ae49fc0b22957560.FdXYaqpUbFbvUbEP",
+  apiKey: process.env.ZHIPU_API_KEY,
 });
 
 export const execute = inngest.createFunction(

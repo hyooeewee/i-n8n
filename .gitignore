@@ -45,3 +45,8 @@ next-env.d.ts
 # editor
 .vscode
 .cspell
+
+# custom untracked files
+noTrack.*
+# Sentry Config File
+.env.sentry-build-plugin

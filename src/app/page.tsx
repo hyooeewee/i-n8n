@@ -17,6 +17,13 @@ const Page = () => {
       },
     })
   );
+  const testAI = useMutation(
+    trpc.testAI.mutationOptions({
+      onSuccess: () => {
+        toast.success("AI Job Queued");
+      },
+    })
+  );
   return (
     <div className="min-w-full min-h-screen flex flex-col items-center justify-center gap-y-6">
       Protected server component
@@ -28,6 +35,12 @@ const Page = () => {
         Create Workflow
       </Button>
       <LogoutButton />
+      <Button
+        disabled={testAI.isPending}
+        onClick={() => testAI.mutate()}
+      >
+        Test AI
+      </Button>
     </div>
   );
 };

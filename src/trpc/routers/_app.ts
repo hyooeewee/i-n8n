@@ -39,7 +39,16 @@ export const appRouter = createTRPCRouter({
     });
     return {
       success: true,
-      message: "Workflow created",
+      message: "Job queued",
+    };
+  }),
+  testAI: baseProcedure.mutation(async () => {
+    await inngest.send({
+      name: "execute/ai",
+    });
+    return {
+      success: true,
+      message: "Job queued",
     };
   }),
 });

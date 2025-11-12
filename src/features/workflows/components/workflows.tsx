@@ -63,7 +63,7 @@ export const WorkflowsSearch = () => {
   );
 };
 
-export const WorkflowsPagination = ({}) => {
+export const WorkflowsPagination = () => {
   const { data, isFetching } = useSuspenseWorkflows();
   const [params, setParams] = useWorkflowsParams();
   return (

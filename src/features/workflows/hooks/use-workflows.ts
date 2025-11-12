@@ -1,22 +1,21 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
-import { trpc } from "@/trpc/server";
 import {
   useMutation,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
-import { inferInput } from "@trpc/tanstack-react-query";
 import { toast } from "sonner";
+import { useWorkflowsParams } from "./use-workflows-params";
 
 /**
  * Hook to fetch all workflows using suspense
  */
-type Input = inferInput<typeof trpc.workflows.findMany>;
-export const useSuspenseWorkflows = (params: Input) => {
+export const useSuspenseWorkflows = () => {
   const trpc = useTRPC();
+  const [params] = useWorkflowsParams();
   return useSuspenseQuery(trpc.workflows.findMany.queryOptions(params));
 };
 

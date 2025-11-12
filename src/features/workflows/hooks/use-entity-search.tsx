@@ -34,7 +34,7 @@ export const useEntitySearch = <T extends { search: string; page: number }>({
         });
       }
     }, debounceMs);
-    // Rid OOM
+    // Cleanup timer to prevent memory leak
     return () => clearTimeout(timer);
   }, [localSearch, params, setParams, debounceMs]);
   useEffect(() => {

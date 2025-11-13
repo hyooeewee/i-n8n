@@ -33,7 +33,7 @@ export const useCreateWorkflow = () => {
       },
       onError: error => {
         if (!(error instanceof TRPCClientError))
-          toast.error(`Field to create workflow: ${error.message}`);
+          toast.error(`Failed to create workflow: ${error.message}`);
       },
     })
   );
@@ -56,7 +56,7 @@ export const useRemoveWorkflow = () => {
       },
       onError: error => {
         if (!(error instanceof TRPCClientError))
-          toast.error(`Field to remove workflow: ${error.message}`);
+          toast.error(`Failed to remove workflow: ${error.message}`);
       },
     })
   );

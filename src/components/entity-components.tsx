@@ -333,8 +333,7 @@ export const EntityItem = ({
                     onClick={e => e.stopPropagation()}
                   >
                     <DropdownMenuItem onClick={handleRemove}>
-                      <TrashIcon size="4" />
-                      Delete
+                      <TrashIcon className="size-4" /> Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

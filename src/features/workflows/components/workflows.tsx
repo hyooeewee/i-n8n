@@ -26,9 +26,6 @@ import { useWorkflowsParams } from "../hooks/use-workflows-params";
 
 export const WorkflowsList = () => {
   const workflows = useSuspenseWorkflows();
-  if (workflows.data.items.length === 0) {
-    return <WorkflowsEmpty />;
-  }
   return (
     <EntityList
       items={workflows.data.items}

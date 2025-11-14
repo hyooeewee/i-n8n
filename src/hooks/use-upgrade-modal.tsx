@@ -11,7 +11,6 @@ export const useUpgradeModal = () => {
         return true;
       }
     }
-
     return false;
   };
   const modal = (
@@ -20,6 +19,5 @@ export const useUpgradeModal = () => {
       onOpenChange={setOpen}
     />
   );
-
   return { handleError, modal };
 };

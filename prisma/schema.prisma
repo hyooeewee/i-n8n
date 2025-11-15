@@ -20,6 +20,7 @@ model User {
   email         String
   emailVerified Boolean   @default(false)
   image         String?
+
   sessions      Session[]
   accounts      Account[]
   workflows     Workflow[]
@@ -94,6 +95,8 @@ model Workflow {
 
 enum NodeType {
   INITIAL
+  MANUAL_TRIGGER
+  HTTP_REQUEST
 }
 
 model Node {
@@ -105,6 +108,7 @@ model Node {
 
   workflowId        String    
   workflow          Workflow     @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
   outputConnections Connection[] @relation("FromNode")
   inputConnections  Connection[] @relation("ToNode")
 

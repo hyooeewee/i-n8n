@@ -20,12 +20,12 @@ model User {
   email         String
   emailVerified Boolean   @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
   sessions      Session[]
   accounts      Account[]
   workflows     Workflow[]
 
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
   @@unique([email])
   @@map("user")
 }
@@ -34,13 +34,14 @@ model Session {
   id        String   @id
   expiresAt DateTime
   token     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
+
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   @@unique([token])
   @@map("session")
 }
@@ -49,8 +50,6 @@ model Account {
   id                    String    @id
   accountId             String
   providerId            String
-  userId                String
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?
   refreshToken          String?
   idToken               String?
@@ -58,9 +57,12 @@ model Account {
   refreshTokenExpiresAt DateTime?
   scope                 String?
   password              String?
+
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
-
   @@map("account")
 }
 
@@ -69,19 +71,62 @@ model Verification {
   identifier String
   value      String
   expiresAt  DateTime
+
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
-
   @@map("verification")
 }
 
 model Workflow {
   id         String   @id @default(cuid())
   name       String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  
   userId     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  nodes      Node[]
+  connections Connection[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
   @@map("workflow")
+}
+
+enum NodeType {
+  INITIAL
+}
+
+model Node {
+  id                String       @id @default(cuid())
+  name              String    
+  type              NodeType    
+  position          Json    
+  data              Json         @default("{}")
+
+  workflowId        String    
+  workflow          Workflow     @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  outputConnections Connection[] @relation("FromNode")
+  inputConnections  Connection[] @relation("ToNode")
+
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  @@map("node")
+}
+
+model Connection {
+  id         String   @id @default(cuid())
+  fromOutput String   @default("main")
+  toInput    String   @default("main")
+
+  workflowId String
+  workflow   Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  fromNodeId String
+  fromNode   Node     @relation("FromNode", fields: [fromNodeId], references: [id], onDelete: Cascade)
+  toNodeId   String
+  toNode     Node     @relation("ToNode", fields: [toNodeId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@unique([workflowId, fromNodeId, fromOutput, toNodeId, toInput])
+  @@map("connection")
 }

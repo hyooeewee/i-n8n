@@ -1,4 +1,5 @@
 import { NodeExecutor } from "@/features/executions/types";
+import { httpRequestChannel } from "@/inngest/channels/http-request";
 import Handlebars from "handlebars";
 import { NonRetriableError } from "inngest";
 import ky, { type Options } from "ky";
@@ -21,24 +22,48 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
   nodeId,
   context,
   step,
+  publish,
 }) => {
-  // TODO: Publish "loading" state for http request
-  // TODO: Publish "error" state for http request
-  if (!data.variableName)
+  await publish(
+    httpRequestChannel().status({
+      nodeId,
+      status: "loading",
+    })
+  );
+  if (!data.variableName) {
+    await publish(
+      httpRequestChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
     throw new NonRetriableError(
       "HTTP Request node: No variable name configured."
     );
-  if (!data.method)
+  }
+  if (!data.method) {
+    await publish(
+      httpRequestChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
     throw new NonRetriableError("HTTP Request node: No method configured.");
-  if (!data.endpoint)
+  }
+  if (!data.endpoint) {
+    await publish(
+      httpRequestChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
     throw new NonRetriableError("HTTP Request node: No endpoint configured.");
+  }
   const result = await step.run("http-request", async () => {
     const method = data.method;
     const endpoint = Handlebars.compile(data.endpoint)(context);
-    console.log({ endpoint });
     const options: Options = { method };
     if (["POST", "PUT", "PATCH"].includes(method)) {
-      console.log("data.body", data.body);
       const resolved = Handlebars.compile(data.body || "{}")(context);
       JSON.parse(resolved);
       if (data.body) options.body = resolved;
@@ -61,6 +86,11 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
       [data.variableName]: responsePayload,
     };
   });
-  // TODO: Publish "success" state for http request
+  await publish(
+    httpRequestChannel().status({
+      nodeId,
+      status: "success",
+    })
+  );
   return result;
 };

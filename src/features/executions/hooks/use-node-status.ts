@@ -1,0 +1,50 @@
+import { NodeStatus } from "@/components/react-flow/node-status-indicator";
+import type { Realtime } from "@inngest/realtime";
+import { useInngestSubscription } from "@inngest/realtime/hooks";
+import { useEffect, useState } from "react";
+
+interface UseNodeStatusOptions {
+  nodeId: string;
+  channel: string;
+  topic: string;
+  refreshToken: () => Promise<Realtime.Subscribe.Token>;
+}
+
+export const useNodeStatus = ({
+  nodeId,
+  channel,
+  topic,
+  refreshToken,
+}: UseNodeStatusOptions) => {
+  const [status, setStatus] = useState<NodeStatus>("initial");
+  const { data } = useInngestSubscription({
+    refreshToken,
+    enabled: true,
+  });
+  console.log("useNodeStatus", { data });
+  useEffect(() => {
+    if (!data?.length) return;
+    // Find the latest message for this node
+    const latestMessage = data
+      .filter(
+        msg =>
+          msg.kind === "data" &&
+          msg.channel === channel &&
+          msg.topic === topic &&
+          msg.data.nodeId === nodeId
+      )
+      .sort((a, b) => {
+        if (a.kind !== "data" || b.kind !== "data") return 0;
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      })[0];
+    if (latestMessage?.kind === "data") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setStatus(latestMessage.data.status as NodeStatus);
+    }
+  }, [data, nodeId, channel, topic]);
+
+  console.log("useNodeStatus", { status });
+  return status;
+};

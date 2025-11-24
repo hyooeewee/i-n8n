@@ -1,36 +1,21 @@
 import { getExecutor } from "@/features/executions/lib/executor-registry";
 import { NodeType } from "@/generated/prisma/enums";
 import prisma from "@/lib/db";
-import { createOpenAI } from "@ai-sdk/openai";
 import { NonRetriableError } from "inngest";
+import { httpRequestChannel } from "./channels/http-request";
+import { manualTriggerChannel } from "./channels/manual-trigger";
 import { inngest } from "./client";
 import { topologicalSort } from "./utils";
 
-const zhipu = createOpenAI({
-  baseURL: "https://open.bigmodel.cn/api/paas/v4/",
-  apiKey: process.env.ZHIPU_API_KEY,
-});
-
 export const executeWorkflow = inngest.createFunction(
-  { id: "execute-workflow" },
-  { event: "workflow/execute.workflow" },
-  async ({ event, step }) => {
+  { id: "execute-workflow", retries: 0 }, // TODO: Remove in production
+  {
+    event: "workflow/execute.workflow",
+    channels: [httpRequestChannel(), manualTriggerChannel()],
+  },
+  async ({ event, step, publish }) => {
     const id = event.data.id;
     if (!id) throw new NonRetriableError("Workflow ID is required.");
-    // const { steps: zhipuSteps } = await step.ai.wrap(
-    //   "zhipu-generate-text",
-    //   generateText,
-    //   {
-    //     model: zhipu.chat("glm-4.5-flash"),
-    //     system: "You are a helpful assistant.",
-    //     prompt: "What is 2 + 2?",
-    //     experimental_telemetry: {
-    //       isEnabled: true,
-    //       recordInputs: true,
-    //       recordOutputs: true,
-    //     },
-    //   }
-    // );
     const sortedNodes = await step.run("prepare-workflow", async () => {
       const workflow = await prisma.workflow.findUniqueOrThrow({
         where: { id },
@@ -47,7 +32,13 @@ export const executeWorkflow = inngest.createFunction(
         nodeId: node.id,
         context,
         step,
-        data: node.data as Record<string, unknown>,
+        data: node.data as {
+          variableName: string;
+          method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+          endpoint: string;
+          [key: string]: unknown;
+        },
+        publish,
       });
     }
     return {

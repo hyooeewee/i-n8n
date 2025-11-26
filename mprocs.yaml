@@ -1,5 +1,7 @@
 procs:
+  ngrok:
+    cmd: ['pnpm', 'ngrok:dev']
   inngest:
-    cmd: ['pnpm','inngest:dev']
+    cmd: ['sudo', 'pnpm', 'dlx', 'inngest-cli', 'dev']
   next:
-    cmd: ['pnpm','dev']
+    cmd: ['pnpm', 'dev']

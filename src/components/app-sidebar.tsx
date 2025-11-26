@@ -75,11 +75,11 @@ const AppSidebar = () => {
         </SidebarMenuItem>
       </SidebarHeader>
       <SidebarContent>
-        {menuItems.map(group => (
+        {menuItems.map((group) => (
           <SidebarGroup key={group.title}>
             <SidebarGroupContent>
               <SidebarMenu>
-                {group.items.map(item => (
+                {group.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       tooltip={item.title}
@@ -124,7 +124,7 @@ const AppSidebar = () => {
             <SidebarMenuButton
               tooltip="Billing Portal"
               className="gap-x-4 h-10 px-4"
-              onClick={() => authClient.customer.portal()}
+              onClick={async () => await authClient.customer.portal()}
             >
               <CreditCardIcon className="size-4" />
               <span>Billing Portal</span>
@@ -134,8 +134,8 @@ const AppSidebar = () => {
             <SidebarMenuButton
               tooltip="Sign Out"
               className="gap-x-4 h-10 px-4"
-              onClick={() =>
-                authClient.signOut({
+              onClick={async () =>
+                await authClient.signOut({
                   fetchOptions: {
                     onSuccess() {
                       router.push("/login");

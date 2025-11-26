@@ -21,7 +21,6 @@ export const useNodeStatus = ({
     refreshToken,
     enabled: true,
   });
-  console.log("useNodeStatus", { data });
   useEffect(() => {
     if (!data?.length) return;
     // Find the latest message for this node
@@ -44,7 +43,5 @@ export const useNodeStatus = ({
       setStatus(latestMessage.data.status as NodeStatus);
     }
   }, [data, nodeId, channel, topic]);
-
-  console.log("useNodeStatus", { status });
   return status;
 };

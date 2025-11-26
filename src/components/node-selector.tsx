@@ -32,6 +32,12 @@ const triggerNodes: NodeTypeOption[] = [
       "Runs the flow on clicking the button. Good for getting started quickly.",
     icon: MousePointerIcon,
   },
+  {
+    type: NodeType.GOOGLE_FORM_TRIGGER,
+    label: "Google Form",
+    description: "Runs the flow when a Google Form is submitted.",
+    icon: "/logos/googleform.svg",
+  },
 ];
 
 const executionNodes: NodeTypeOption[] = [
@@ -61,16 +67,16 @@ export const NodeSelector = ({
       if (selection.type === NodeType.MANUAL_TRIGGER) {
         const nodes = getNodes();
         const hasManualTrigger = nodes.some(
-          node => node.type === NodeType.MANUAL_TRIGGER
+          (node) => node.type === NodeType.MANUAL_TRIGGER
         );
         if (hasManualTrigger)
           return toast.error(
             "Only one manual trigger is allowed per workflow."
           );
       }
-      setNodes(nodes => {
+      setNodes((nodes) => {
         const hasInitialNode = nodes.some(
-          node => node.type === NodeType.INITIAL
+          (node) => node.type === NodeType.INITIAL
         );
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
@@ -108,7 +114,7 @@ export const NodeSelector = ({
           </SheetDescription>
         </SheetHeader>
         <div>
-          {triggerNodes.map(node => {
+          {triggerNodes.map((node) => {
             const Icon = node.icon;
             return (
               <div
@@ -121,6 +127,8 @@ export const NodeSelector = ({
                     <Image
                       src={Icon}
                       alt={node.label}
+                      width={20}
+                      height={20}
                       className="size-5 object-contain rounded-sm"
                     />
                   ) : (
@@ -139,7 +147,7 @@ export const NodeSelector = ({
         </div>
         <Separator />
         <div>
-          {executionNodes.map(node => {
+          {executionNodes.map((node) => {
             const Icon = node.icon;
             return (
               <div

@@ -23,11 +23,6 @@ export const POST = async (request: NextRequest) => {
     };
     // Trigger an inngest job
     await sendWorkflowExecution({ id, initialData: { googleForm: formData } });
-
-    return NextResponse.json(
-      { success: true, message: "Workflow triggered successfully." },
-      { status: 200 }
-    );
   } catch (error) {
     console.error("Failed to receive data from Google:", error);
     return NextResponse.json(

@@ -8,7 +8,7 @@ export const topologicalSort = (nodes: Node[], connections: Connection[]) => {
     return nodes;
   }
   // Create edges array for toposort
-  const edges: [string, string][] = connections.map(connection => [
+  const edges: [string, string][] = connections.map((connection) => [
     connection.fromNodeId,
     connection.toNodeId,
   ]);
@@ -35,11 +35,11 @@ export const topologicalSort = (nodes: Node[], connections: Connection[]) => {
     throw error;
   }
   // Map sorted Ids back to node objects
-  const nodeMap = new Map(nodes.map(node => [node.id, node]));
-  return sortedNodeIds.map(id => nodeMap.get(id))
+  const nodeMap = new Map(nodes.map((node) => [node.id, node]));
+  return sortedNodeIds.map((id) => nodeMap.get(id));
 };
 
-export const sendWorkflowExecution = (data: {
+export const sendWorkflowExecution = async (data: {
   id: string;
   [key: string]: unknown;
 }) => {

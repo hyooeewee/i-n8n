@@ -9,9 +9,9 @@ import { inngest } from "./client";
 import { topologicalSort } from "./utils";
 
 export const executeWorkflow = inngest.createFunction(
-  { id: "execute-workflow", retries: 0 }, // TODO: Remove in production
+  { id: "execute-workflow" },
   {
-    event: "workflow/execute.workflow",
+    event: "workflows/execute.workflow",
     channels: [
       httpRequestChannel(),
       manualTriggerChannel(),

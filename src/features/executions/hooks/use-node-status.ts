@@ -17,16 +17,17 @@ export const useNodeStatus = ({
   refreshToken,
 }: UseNodeStatusOptions) => {
   const [status, setStatus] = useState<NodeStatus>("initial");
-  const { data } = useInngestSubscription({
+  const { data, error } = useInngestSubscription({
     refreshToken,
     enabled: true,
   });
+  if (error) console.error(error);
   useEffect(() => {
     if (!data?.length) return;
     // Find the latest message for this node
     const latestMessage = data
       .filter(
-        msg =>
+        (msg) =>
           msg.kind === "data" &&
           msg.channel === channel &&
           msg.topic === topic &&

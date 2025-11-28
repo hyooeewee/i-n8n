@@ -1,6 +1,5 @@
 import { PAGINATION } from "@/config/constants";
 import { NodeType } from "@/generated/prisma/client";
-import { inngest } from "@/inngest/client";
 import { sendWorkflowExecution } from "@/inngest/utils";
 import prisma from "@/lib/db";
 import {
@@ -88,7 +87,7 @@ export const workflowsRouter = createTRPCRouter({
         },
       });
       // Transaction to ensure consistency
-      return await prisma.$transaction(async tx => {
+      return await prisma.$transaction(async (tx) => {
         // Delete existing nodes and connections (cascade deletes connections)
         await tx.node.deleteMany({
           where: {
@@ -97,7 +96,7 @@ export const workflowsRouter = createTRPCRouter({
         });
         // Create nodes
         await tx.node.createMany({
-          data: nodes.map(node => ({
+          data: nodes.map((node) => ({
             id: node.id,
             workflowId: id,
             name: node.type || "unknown",
@@ -108,7 +107,7 @@ export const workflowsRouter = createTRPCRouter({
         });
         // Create connections
         await tx.connection.createMany({
-          data: edges.map(edge => ({
+          data: edges.map((edge) => ({
             workflowId: id,
             fromNodeId: edge.source,
             toNodeId: edge.target,
@@ -155,14 +154,14 @@ export const workflowsRouter = createTRPCRouter({
         },
       });
       // Transform server nodes to react-flow compatible nodes
-      const nodes: Node[] = workflow.nodes.map(node => ({
+      const nodes: Node[] = workflow.nodes.map((node) => ({
         id: node.id,
         type: node.type,
         position: node.position as { x: number; y: number },
         data: (node.data as Record<string, unknown>) || {},
       }));
       // Transform server connections to react-flow compatible edges
-      const edges: Edge[] = workflow.connections.map(connection => ({
+      const edges: Edge[] = workflow.connections.map((connection) => ({
         id: connection.id,
         source: connection.fromNodeId,
         target: connection.toNodeId,

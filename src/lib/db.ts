@@ -1,10 +1,12 @@
 import { PrismaClient } from "@/generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 // TIPS: Use global instance to avoid development hot-reloading create repeat clients issues.
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const globalForPrisma = global as unknown as {
   prisma: PrismaClient;
 };
-const prisma = globalForPrisma.prisma || new PrismaClient();
+const prisma = globalForPrisma.prisma || new PrismaClient({ adapter });
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export default prisma;

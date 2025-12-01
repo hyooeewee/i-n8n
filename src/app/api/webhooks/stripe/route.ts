@@ -13,21 +13,19 @@ export const POST = async (request: NextRequest) => {
     }
     const body = await request.json();
     const data = {
-      formId: body.formId,
-      formTitle: body.formTitle,
-      responseId: body.responseId,
-      timestamp: body.timestamp,
-      respondentEmail: body.respondentEmail,
-      responses: body.responses,
-      raw: body,
+      eventId: body.id,
+      eventType: body.type,
+      timestamp: body.created,
+      livemode: body.livemode,
+      raw: body.data?.object,
     };
     // Trigger an inngest job
-    await sendWorkflowExecution({ id, initialData: { googleForm: data } });
+    await sendWorkflowExecution({ id, initialData: { stripe: data } });
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    console.error("Failed to receive data from Google:", error);
+    console.error("Failed to receive data from Stripe:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to process Google Form submission." },
+      { success: false, error: "Failed to process Stripe Event." },
       { status: 500 }
     );
   }

@@ -31,7 +31,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-export const AVAILABLE_MODELS = ["gpt-5", "o3"] as const;
+export const AVAILABLE_MODELS = ["claude-haiku-4-5", "claude-sonnet-4-5"] as const;
 
 const formSchema = z.object({
   variableName: z
@@ -39,7 +39,7 @@ const formSchema = z.object({
     .min(1, "Variable name is required")
     .regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/, {
       message:
-        "Invalid variable name, variable name must start with a letter or underscore and container only letters, numbers, and underscores",
+        "Invalid variable name, variable name must start with a letter or underscore and contain only letters, numbers, and underscores",
     }),
   model: z.enum(AVAILABLE_MODELS),
   systemPrompt: z.string().optional(),

@@ -7,11 +7,15 @@ import { NonRetriableError } from "inngest";
 import { AVAILABLE_MODELS } from "./dialog";
 
 Handlebars.registerHelper("json", (context) => {
-  const jsonString = JSON.stringify(context, null, 2);
-  const safeString = new Handlebars.SafeString(jsonString);
-  return safeString;
+  try {
+    const jsonString = JSON.stringify(context, null, 2);
+    return new Handlebars.SafeString(jsonString);
+  } catch (error) {
+    return new Handlebars.SafeString(
+      JSON.stringify({ error: "Failed to serialize" })
+    );
+  }
 });
-
 export type GeminiData = {
   variableName?: string;
   model?: (typeof AVAILABLE_MODELS)[number];
@@ -81,7 +85,7 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
       },
     });
     const text =
-      steps[0].content[0].type === "text" ? steps[0].content[0].text : "";
+      steps?.[0]?.content?.[0]?.type === "text" ? steps[0].content[0].text : "";
     await publish(
       geminiChannel().status({
         nodeId,
@@ -102,5 +106,6 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
       })
     );
     console.error("Error in Gemini executor: ", error);
+    throw error;
   }
 };

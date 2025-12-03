@@ -102,5 +102,6 @@ export const openaiExecutor: NodeExecutor<OpenAiData> = async ({
       })
     );
     console.error("Error in OpenAi executor: ", error);
+    throw error;
   }
 };

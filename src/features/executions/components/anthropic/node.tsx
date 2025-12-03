@@ -25,7 +25,7 @@ export const AnthropicNode = memo((props: NodeProps<AnthropicNodeProps>) => {
     ? `${nodeData.model || AVAILABLE_MODELS[0]}: ${nodeData.userPrompt.slice(
         0,
         50
-      )}...}`
+      )}...`
     : "Not configured";
   const status = useNodeStatus({
     nodeId: props.id,
@@ -33,7 +33,6 @@ export const AnthropicNode = memo((props: NodeProps<AnthropicNodeProps>) => {
     topic: "status",
     refreshToken: fetchAnthropicRealtimeToken,
   });
-  // const status = 'loading'
   const handleOpenSettings = () => setDialogOpen(true);
   const handleSubmit = (values: AnthropicValues) =>
     setNodes((nodes) =>
@@ -61,7 +60,6 @@ export const AnthropicNode = memo((props: NodeProps<AnthropicNodeProps>) => {
       />
       <BaseExecutionNode
         {...props}
-        id={props.id}
         icon="/logos/anthropic.svg"
         name="Anthropic"
         description={description}

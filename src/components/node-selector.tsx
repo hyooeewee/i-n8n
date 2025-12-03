@@ -61,7 +61,7 @@ const executionNodes: NodeTypeOption[] = [
   },
   {
     type: NodeType.OPENAI,
-    label: "Openai",
+    label: "OpenAI",
     description: "Use Openai to generate content.",
     icon: "/logos/openai.svg",
   },
@@ -73,7 +73,7 @@ const executionNodes: NodeTypeOption[] = [
   },
   {
     type: NodeType.ZHIPU,
-    label: "zhipu",
+    label: "Zhipu",
     description: "Use Zhipu AI to generate content.",
     icon: "/logos/zhipu.svg",
   },

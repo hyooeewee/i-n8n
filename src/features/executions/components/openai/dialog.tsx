@@ -39,7 +39,7 @@ const formSchema = z.object({
     .min(1, "Variable name is required")
     .regex(/^[a-zA-Z_][a-zA-Z0-9_]*$/, {
       message:
-        "Invalid variable name, variable name must start with a letter or underscore and container only letters, numbers, and underscores",
+        "Invalid variable name, variable name must start with a letter or underscore and contain only letters, numbers, and underscores",
     }),
   model: z.enum(AVAILABLE_MODELS),
   systemPrompt: z.string().optional(),
@@ -94,10 +94,10 @@ export const OpenAiDialog = ({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>OpenAi Configuration</DialogTitle>
+          <DialogTitle>OpenAI Configuration</DialogTitle>
           <DialogDescription>
             Configure the AI model and prompts for this node.
-          </DialogDescription>
+          </DialogDescription>{" "}
         </DialogHeader>
         <Form {...form}>
           <form
@@ -150,7 +150,7 @@ export const OpenAiDialog = ({
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    The Google OpenAi model to use for completion.
+                    The OpenAI model to use for completion.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

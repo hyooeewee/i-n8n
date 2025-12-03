@@ -25,7 +25,7 @@ export const OpenAiNode = memo((props: NodeProps<OpenAiNodeProps>) => {
     ? `${nodeData.model || AVAILABLE_MODELS[0]}: ${nodeData.userPrompt.slice(
         0,
         50
-      )}...}`
+      )}...`
     : "Not configured";
   const status = useNodeStatus({
     nodeId: props.id,

@@ -107,5 +107,6 @@ export const zhipuExecutor: NodeExecutor<ZhiPuData> = async ({
       })
     );
     console.error("Error in ZhiPu executor: ", error);
+    throw error;
   }
 };

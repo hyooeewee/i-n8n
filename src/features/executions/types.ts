@@ -15,9 +15,6 @@ export interface NodeExecutorParams<TData = Record<string, unknown>> {
 
 export type NodeExecutor<
   TData = {
-    variableName: string;
-    method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-    endpoint: string;
     [key: string]: unknown;
   }
-> = (params: NodeExecutorParams<TData>) => Promise<WorkflowContext>;
+> = (params: NodeExecutorParams<TData>) => Promise<WorkflowContext | undefined>;

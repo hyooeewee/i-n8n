@@ -1,5 +1,6 @@
 import { getExecutor } from "@/features/executions/lib/executor-registry";
 import { NodeType } from "@/generated/prisma/enums";
+import { geminiChannel } from "@/inngest/channels/gemini";
 import { googleFormTriggerChannel } from "@/inngest/channels/google-form-trigger";
 import { httpRequestChannel } from "@/inngest/channels/http-request";
 import { manualTriggerChannel } from "@/inngest/channels/manual-trigger";
@@ -8,6 +9,9 @@ import { inngest } from "@/inngest/client";
 import { topologicalSort } from "@/inngest/utils";
 import prisma from "@/lib/db";
 import { NonRetriableError } from "inngest";
+import { anthropicChannel } from "@/inngest/channels/anthropic";
+import { openaiChannel } from "@/inngest/channels/openai";
+import { zhipuChannel } from "@/inngest/channels/zhipu";
 
 export const executeWorkflow = inngest.createFunction(
   { id: "execute-workflow" },
@@ -18,6 +22,10 @@ export const executeWorkflow = inngest.createFunction(
       manualTriggerChannel(),
       googleFormTriggerChannel(),
       stripeTriggerChannel(),
+      geminiChannel(),
+      openaiChannel(),
+      zhipuChannel(),
+      anthropicChannel(),
     ],
   },
   async ({ event, step, publish }) => {
@@ -40,9 +48,6 @@ export const executeWorkflow = inngest.createFunction(
         context,
         step,
         data: node.data as {
-          variableName: string;
-          method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
-          endpoint: string;
           [key: string]: unknown;
         },
         publish,

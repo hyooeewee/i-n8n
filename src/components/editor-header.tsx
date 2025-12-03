@@ -61,7 +61,7 @@ export const EditorNameInput = ({ id }: { id: string }) => {
         className="h-7 w-auto min-w-[100px] px-2"
         ref={inputRef}
         value={name}
-        onChange={e => setName(e.target.value)}
+        onChange={(e) => setName(e.target.value)}
         disabled={updateWorkflow.isPending}
         onKeyDown={handleKeydown}
         onBlur={handleSave}

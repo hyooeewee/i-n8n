@@ -1,11 +1,11 @@
 "use client";
 
+import { BaseExecutionNode } from "@/features/executions/components/base-execution-node";
+import { useNodeStatus } from "@/features/executions/hooks/use-node-status";
 import { HTTP_REQUEST_CHANNEL_NAME } from "@/inngest/channels/http-request";
 import { useReactFlow, type Node, type NodeProps } from "@xyflow/react";
 import { GlobeIcon } from "lucide-react";
 import { memo, useState } from "react";
-import { useNodeStatus } from "../../hooks/use-node-status";
-import { BaseExecutionNode } from "../base-execution-node";
 import { fetchHttpRequestRealtimeToken } from "./actions";
 import { HttpRequestDialog, HttpRequestValues } from "./dialog";
 
@@ -35,8 +35,8 @@ export const HttpRequestNode = memo(
     // const status = 'loading'
     const handleOpenSettings = () => setDialogOpen(true);
     const handleSubmit = (values: HttpRequestValues) =>
-      setNodes(nodes =>
-        nodes.map(node => {
+      setNodes((nodes) =>
+        nodes.map((node) => {
           if (node.id === props.id) {
             return {
               ...node,

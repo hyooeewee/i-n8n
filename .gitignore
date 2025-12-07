@@ -48,5 +48,6 @@ next-env.d.ts
 
 # custom untracked files
 noTrack.*
+*.log
 # Sentry Config File
 .env.sentry-build-plugin

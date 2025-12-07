@@ -199,7 +199,6 @@ export const AnthropicDialog = ({
                           </div>
                         </SelectItem>
                       ))}
-                      <FormMessage />
                     </SelectContent>
                   </Select>
                   <FormMessage />

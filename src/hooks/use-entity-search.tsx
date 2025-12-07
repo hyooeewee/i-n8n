@@ -21,8 +21,11 @@ export const useEntitySearch = <T extends { search: string; page: number }>({
   useEffect(() => {
     // Empty search input
     if (localSearch === "" && params.search !== "") {
-      setParams({ ...params, search: "", page: PAGINATION.DEFAULT_PAGE });
-      return;
+      return setParams({
+        ...params,
+        search: "",
+        page: PAGINATION.DEFAULT_PAGE,
+      });
     }
     const timer = setTimeout(() => {
       // Search input changed

@@ -14,6 +14,7 @@ Handlebars.registerHelper("json", (context) => {
     return new Handlebars.SafeString(jsonString);
   } catch (error) {
     console.error("Failed to serialize: " + error);
+    return new Handlebars.SafeString("");
   }
 });
 
@@ -55,6 +56,15 @@ export const zhipuExecutor: NodeExecutor<ZhiPuData> = async ({
       })
     );
     throw new NonRetriableError("ZhiPu node: No model configured.");
+  }
+  if (!data.credentialId) {
+    await publish(
+      zhipuChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
+    throw new NonRetriableError("ZhiPu node: No credential configured.");
   }
   const credential = await step.run("get-credential", () => {
     return prisma.credential.findUniqueOrThrow({

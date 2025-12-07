@@ -9,7 +9,9 @@ import {
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
-export function PasswordInput({ ...props }) {
+export function PasswordInput(
+  props: React.InputHTMLAttributes<HTMLInputElement>
+) {
   const [visible, setVisible] = useState(false);
 
   return (
@@ -23,6 +25,8 @@ export function PasswordInput({ ...props }) {
           onClick={() => setVisible((v) => !v)}
           variant="link"
           className="text-muted-foreground"
+          aria-label={visible ? "Hide password" : "Show password"}
+          aria-pressed={visible}
         >
           {visible ? <Eye /> : <EyeOff />}
         </InputGroupButton>

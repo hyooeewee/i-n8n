@@ -99,22 +99,19 @@ export const CredentialForm = ({ initialData }: Props) => {
   });
 
   const onSubmit = async (values: FormValues) => {
-    if (isEdit && initialData?.id) {
-      await updateCredential.mutateAsync(
-        {
+    try {
+      if (isEdit && initialData?.id) {
+        await updateCredential.mutateAsync({
           id: initialData.id,
           ...values,
-        },
-        {
-          onSuccess: () => router.push(`/credentials`),
-          onError: (error) => handleError(error),
-        }
-      );
-    } else if (!isEdit) {
-      await createCredential.mutateAsync(values, {
-        onSuccess: (data) => router.push(`/credentials/${data.id}`),
-        onError: (error) => handleError(error),
-      });
+        });
+        router.push(`/credentials`);
+      } else if (!isEdit) {
+        const data = await createCredential.mutateAsync(values);
+        router.push(`/credentials/${data.id}`);
+      }
+    } catch (error) {
+      handleError(error);
     }
   };
 
@@ -187,7 +184,6 @@ export const CredentialForm = ({ initialData }: Props) => {
                         <FormMessage />
                       </SelectContent>
                     </Select>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -218,7 +214,7 @@ export const CredentialForm = ({ initialData }: Props) => {
                   {isEdit ? "Update" : "Create"}
                 </Button>
                 <Button
-                  type="submit"
+                  type="button"
                   variant="outline"
                   asChild
                 >

@@ -54,7 +54,7 @@ export const WorkflowsHeader = ({ disabled }: { disabled?: boolean }) => {
       {modal}
       <EntityHeader
         title="Workflows"
-        description="create and manage your workflows"
+        description="Create and manage your workflows"
         newButtonLabel="New Workflow"
         disabled={disabled}
         isCreating={createWorkflow.isPending}
@@ -134,7 +134,7 @@ export const WorkflowsEmpty = () => {
     <>
       {modal}
       <EmptyView
-        message="You haven't created any workflows yet. get started by creating your first workflow."
+        message="You haven't created any workflows yet. Get started by creating your first workflow."
         onNew={handleCreate}
       />
     </>

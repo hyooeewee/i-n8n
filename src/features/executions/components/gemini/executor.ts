@@ -77,58 +77,46 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
     ? Handlebars.compile(data.systemPrompt)(context)
     : "You are a helpful assistant.";
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
-
-  try {
-    const credential = await step.run("get-credential", () => {
-      return prisma.credential.findUniqueOrThrow({
-        where: {
-          id: data.credentialId,
-        },
-      });
-    });
-    if (!credential?.value) {
-      await publish(
-        geminiChannel().status({
-          nodeId,
-          status: "error",
-        })
-      );
-      throw new NonRetriableError("Gemini node: Credential not found.");
-    }
-    const apiKey = credential.value || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-    const google = createGoogleGenerativeAI({ apiKey });
-    const { steps } = await step.ai.wrap("gemini-generate-text", generateText, {
-      model: google(data.model || AVAILABLE_MODELS[0]),
-      system: systemPrompt,
-      prompt: userPrompt,
-      experimental_telemetry: {
-        isEnabled: true,
-        recordInputs: true,
-        recordOutputs: true,
+  const credential = await step.run("get-credential", () => {
+    return prisma.credential.findUniqueOrThrow({
+      where: {
+        id: data.credentialId,
       },
     });
-    const text =
-      steps?.[0]?.content?.[0]?.type === "text" ? steps[0].content[0].text : "";
-    await publish(
-      geminiChannel().status({
-        nodeId,
-        status: "success",
-      })
-    );
-    return {
-      ...context,
-      [data.variableName]: {
-        aiResponse: { text },
-      },
-    };
-  } catch (error) {
+  });
+  if (!credential?.value) {
     await publish(
       geminiChannel().status({
         nodeId,
         status: "error",
       })
     );
-    console.error("Error in Gemini executor: ", error);
-    throw error;
+    throw new NonRetriableError("Gemini node: Credential not found.");
   }
+  const apiKey = credential.value || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  const google = createGoogleGenerativeAI({ apiKey });
+  const { steps } = await step.ai.wrap("gemini-generate-text", generateText, {
+    model: google(data.model || AVAILABLE_MODELS[0]),
+    system: systemPrompt,
+    prompt: userPrompt,
+    experimental_telemetry: {
+      isEnabled: true,
+      recordInputs: true,
+      recordOutputs: true,
+    },
+  });
+  const text =
+    steps?.[0]?.content?.[0]?.type === "text" ? steps[0].content[0].text : "";
+  await publish(
+    geminiChannel().status({
+      nodeId,
+      status: "success",
+    })
+  );
+  return {
+    ...context,
+    [data.variableName]: {
+      aiResponse: { text },
+    },
+  };
 };

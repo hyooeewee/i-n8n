@@ -84,7 +84,7 @@ export const ZhiPuDialog = ({
     onSubmit(values);
     onOpenChange(false);
   };
-  // Reset form when dialog opens with new defaults
+  // Reset form when dialog open with new defaults
   useEffect(() => {
     if (open) {
       form.reset({
@@ -96,6 +96,7 @@ export const ZhiPuDialog = ({
       });
     }
   }, [open, defaultValues, form.reset]);
+
   return (
     <Dialog
       open={open}
@@ -196,7 +197,6 @@ export const ZhiPuDialog = ({
                           </div>
                         </SelectItem>
                       ))}
-                      <FormMessage />
                     </SelectContent>
                   </Select>
                   <FormMessage />

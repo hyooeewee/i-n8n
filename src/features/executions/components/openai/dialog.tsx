@@ -197,7 +197,6 @@ export const OpenAiDialog = ({
                           </div>
                         </SelectItem>
                       ))}
-                      <FormMessage />
                     </SelectContent>
                   </Select>
                   <FormMessage />

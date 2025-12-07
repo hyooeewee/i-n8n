@@ -45,7 +45,7 @@ export const CredentialsHeader = ({ disabled }: { disabled?: boolean }) => {
   return (
     <EntityHeader
       title="Credentials"
-      description="create and manage your credentials"
+      description="Create and manage your credentials"
       newButtonLabel="New Credential"
       newButtonHref="/credentials/new"
       disabled={disabled}
@@ -112,7 +112,7 @@ export const CredentialsEmpty = () => {
   };
   return (
     <EmptyView
-      message="You haven't created any credentials yet. get started by creating your first credential."
+      message="You haven't created any credentials yet. Get started by creating your first credential."
       onNew={handleCreate}
     />
   );

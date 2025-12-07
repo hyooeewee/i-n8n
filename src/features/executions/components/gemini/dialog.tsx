@@ -205,7 +205,6 @@ export const GeminiDialog = ({
                           </div>
                         </SelectItem>
                       ))}
-                      <FormMessage />
                     </SelectContent>
                   </Select>
                   <FormMessage />

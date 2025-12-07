@@ -10,7 +10,6 @@ const Page = async ({ params }: PageProps) => {
   await requireAuth();
   const { id } = await params;
   prefetchCredential(id);
-
   return <CredentialView id={id} />;
 };
 

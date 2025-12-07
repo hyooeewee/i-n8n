@@ -27,12 +27,13 @@ export const useSuspenseCredentials = () => {
 export const useCreateCredential = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const [params] = useCredentialsParams();
   return useMutation(
     trpc.credentials.create.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Credential "${data.name}" created`);
         queryClient.invalidateQueries(
-          trpc.credentials.findMany.queryOptions({})
+          trpc.credentials.findMany.queryOptions(params)
         );
       },
       onError: (error) => {

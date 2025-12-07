@@ -59,7 +59,7 @@ export const workflowsRouter = createTRPCRouter({
         nodes: z.array(
           z.object({
             id: z.string(),
-            type: z.string().nullish(),
+            type: z.enum(NodeType),
             position: z.object({
               x: z.number(),
               y: z.number(),
@@ -100,7 +100,7 @@ export const workflowsRouter = createTRPCRouter({
             id: node.id,
             workflowId: id,
             name: node.type || "unknown",
-            type: node.type as NodeType,
+            type: node.type,
             position: node.position,
             data: node.data || {},
           })),
@@ -116,7 +116,7 @@ export const workflowsRouter = createTRPCRouter({
           })),
         });
         // Update workflow's updatedAt timestamp
-        await tx.workflow.update({
+        const updatedWorkflow = await tx.workflow.update({
           where: {
             id,
           },
@@ -124,7 +124,7 @@ export const workflowsRouter = createTRPCRouter({
             updatedAt: new Date(),
           },
         });
-        return workflow;
+        return updatedWorkflow;
       });
     }),
   updateName: protectedProcedure

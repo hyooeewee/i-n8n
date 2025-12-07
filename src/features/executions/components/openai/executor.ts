@@ -84,7 +84,7 @@ export const openaiExecutor: NodeExecutor<OpenAiData> = async ({
     ? Handlebars.compile(data.systemPrompt)(context)
     : "You are a helpful assistant.";
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
-  const apiKey = credential.value || process.env.OPENAI_API_KEY;
+  const apiKey = credential?.value || process.env.OPENAI_API_KEY;
   const openai = createOpenAI({ apiKey });
   try {
     const { steps } = await step.ai.wrap("openai-generate-text", generateText, {

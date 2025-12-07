@@ -80,13 +80,13 @@ const executionNodes: NodeTypeOption[] = [
   {
     type: NodeType.DISCORD,
     label: "Discord",
-    description: "Send a message to discord.",
+    description: "Send a message to Discord.",
     icon: "/logos/discord.svg",
   },
   {
     type: NodeType.SLACK,
     label: "Slack",
-    description: "Send a message to slack.",
+    description: "Send a message to Slack.",
     icon: "/logos/slack.svg",
   },
 ];
@@ -132,7 +132,6 @@ export const NodeSelector = ({
           position: flowPosition,
           data: {},
         };
-        console.log("newNode", newNode);
         if (hasInitialNode) return [newNode];
         return [...nodes, newNode];
       });

@@ -29,42 +29,40 @@ export const discordExecutor: NodeExecutor<DiscordData> = async ({
   step,
   publish,
 }) => {
-  try {
+  await publish(
+    discordChannel().status({
+      nodeId,
+      status: "loading",
+    })
+  );
+  if (!data.variableName) {
     await publish(
       discordChannel().status({
         nodeId,
-        status: "loading",
+        status: "error",
       })
     );
-    if (!data.variableName) {
-      await publish(
-        discordChannel().status({
-          nodeId,
-          status: "error",
-        })
-      );
-      throw new NonRetriableError("Discord node: No variable name configured.");
-    }
-    if (!data.webhookUrl) {
-      await publish(
-        discordChannel().status({
-          nodeId,
-          status: "error",
-        })
-      );
-      throw new NonRetriableError("Discord node: No webhook url configured.");
-    }
-    if (!data.content) {
-      await publish(
-        discordChannel().status({
-          nodeId,
-          status: "error",
-        })
-      );
-      throw new NonRetriableError(
-        "Discord node: No message content configured."
-      );
-    }
+    throw new NonRetriableError("Discord node: No variable name configured.");
+  }
+  if (!data.webhookUrl) {
+    await publish(
+      discordChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
+    throw new NonRetriableError("Discord node: No webhook url configured.");
+  }
+  if (!data.content) {
+    await publish(
+      discordChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
+    throw new NonRetriableError("Discord node: No message content configured.");
+  }
+  try {
     const content = decode(Handlebars.compile(data.content)(context));
     const username = data.username
       ? decode(Handlebars.compile(data.username)(context))

@@ -67,11 +67,15 @@ export const DiscordDialog = ({
   });
   // eslint-disable-next-line react-hooks/incompatible-library
   const watchVariableName = form.watch("variableName") || "myDiscord";
-  const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    onSubmit(values);
-    onOpenChange(false);
-  };
-  // Reset form when dialog open with new defaults
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      await onSubmit(values);
+      onOpenChange(false);
+    } catch (error) {
+      // Error will be displayed by form validation or can be logged
+      console.error("Failed to submit Discord configuration:", error);
+    }
+  }; // Reset form when dialog open with new defaults
   useEffect(() => {
     if (open) {
       form.reset({
@@ -113,7 +117,7 @@ export const DiscordDialog = ({
                     />
                   </FormControl>
                   <FormDescription>
-                    {`Use this name to reference the response in other nodes: {{ ${watchVariableName}.aiResponse.text }}`}
+                    {`Use this name to reference the response in other nodes: {{ ${watchVariableName}.content }}`}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

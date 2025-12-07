@@ -28,9 +28,8 @@ export const SlackNode = memo((props: NodeProps<SlackNodeProps>) => {
     topic: "status",
     refreshToken: fetchSlackRealtimeToken,
   });
-  // const status = 'loading'
   const handleOpenSettings = () => setDialogOpen(true);
-  const handleSubmit = (values: SlackValues) =>
+  const handleSubmit = (values: SlackValues) => {
     setNodes((nodes) =>
       nodes.map((node) => {
         if (node.id === props.id) {
@@ -45,7 +44,8 @@ export const SlackNode = memo((props: NodeProps<SlackNodeProps>) => {
         return node;
       })
     );
-
+    setDialogOpen(false);
+  };
   return (
     <>
       <SlackDialog

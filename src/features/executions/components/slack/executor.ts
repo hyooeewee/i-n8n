@@ -16,9 +16,9 @@ Handlebars.registerHelper("json", (context) => {
 });
 
 export type SlackData = {
-  variableName?: string;
-  webhookUrl?: string;
-  content?: string;
+  variableName: string;
+  webhookUrl: string;
+  content: string;
 };
 
 export const slackExecutor: NodeExecutor<SlackData> = async ({
@@ -28,40 +28,40 @@ export const slackExecutor: NodeExecutor<SlackData> = async ({
   step,
   publish,
 }) => {
-  try {
+  await publish(
+    slackChannel().status({
+      nodeId,
+      status: "loading",
+    })
+  );
+  if (!data.variableName) {
     await publish(
       slackChannel().status({
         nodeId,
-        status: "loading",
+        status: "error",
       })
     );
-    if (!data.variableName) {
-      await publish(
-        slackChannel().status({
-          nodeId,
-          status: "error",
-        })
-      );
-      throw new NonRetriableError("Slack node: No variable name configured.");
-    }
-    if (!data.webhookUrl) {
-      await publish(
-        slackChannel().status({
-          nodeId,
-          status: "error",
-        })
-      );
-      throw new NonRetriableError("Slack node: No webhook url configured.");
-    }
-    if (!data.content) {
-      await publish(
-        slackChannel().status({
-          nodeId,
-          status: "error",
-        })
-      );
-      throw new NonRetriableError("Slack node: No message content configured.");
-    }
+    throw new NonRetriableError("Slack node: No variable name configured.");
+  }
+  if (!data.webhookUrl) {
+    await publish(
+      slackChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
+    throw new NonRetriableError("Slack node: No webhook url configured.");
+  }
+  if (!data.content) {
+    await publish(
+      slackChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
+    throw new NonRetriableError("Slack node: No message content configured.");
+  }
+  try {
     const content = decode(Handlebars.compile(data.content)(context));
     await step.run("slack-webhook", async () => {
       await ky.post(data.webhookUrl!, {

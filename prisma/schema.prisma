@@ -96,17 +96,18 @@ model Credential {
 }
 
 model Workflow {
-  id         String   @id @default(cuid())
-  name       String
-  
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id          String   @id @default(cuid())
+  name        String
 
-  nodes      Node[]
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  nodes       Node[]
   connections Connection[]
+  executions  Execution[]
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   @@map("workflow")
 }
 
@@ -168,4 +169,28 @@ model Connection {
   updatedAt  DateTime @updatedAt
   @@unique([workflowId, fromNodeId, fromOutput, toNodeId, toInput])
   @@map("connection")
+}
+
+enum ExecutionStatus {
+  RUNNING
+  SUCCESS
+  FAILED
+}
+
+model Execution {
+  id          String           @id @default(cuid())
+  status      ExecutionStatus  @default(RUNNING)
+  error       String?          @db.Text
+  errorStack  String?          @db.Text
+  startedAt   DateTime         @default(now())
+  completedAt DateTime?
+  inngestEventId   String      @unique
+  output      Json
+
+  workflowId  String
+  workflow    Workflow         @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  @@map("execution")
 }

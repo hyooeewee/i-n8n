@@ -1,6 +1,5 @@
 "use client";
 
-import { useCredentialsParams } from "@/features/credentials/hooks/use-credentials-params";
 import { CredentialType } from "@/generated/prisma/enums";
 import { useTRPC } from "@/trpc/client";
 import {
@@ -11,6 +10,7 @@ import {
 } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
 import { toast } from "sonner";
+import { useCredentialsParams } from "./use-credentials-params";
 
 /**
  * Hook to fetch all credentials using suspense

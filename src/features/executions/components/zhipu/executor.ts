@@ -4,18 +4,24 @@ import { generateText } from "ai";
 import Handlebars from "handlebars";
 import { NonRetriableError } from "inngest";
 // import { createZhipu } from "zhipu-ai-provider";
+import prisma from "@/lib/db";
 import { createOpenAI } from "@ai-sdk/openai";
 import { AVAILABLE_MODELS } from "./dialog";
 
 Handlebars.registerHelper("json", (context) => {
-  const jsonString = JSON.stringify(context, null, 2);
-  const safeString = new Handlebars.SafeString(jsonString);
-  return safeString;
+  try {
+    const jsonString = JSON.stringify(context, null, 2);
+    return new Handlebars.SafeString(jsonString);
+  } catch (error) {
+    console.error("Failed to serialize: " + error);
+    return new Handlebars.SafeString("");
+  }
 });
 
 export type ZhiPuData = {
   variableName?: string;
   model?: (typeof AVAILABLE_MODELS)[number];
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };
@@ -51,7 +57,31 @@ export const zhipuExecutor: NodeExecutor<ZhiPuData> = async ({
     );
     throw new NonRetriableError("ZhiPu node: No model configured.");
   }
-  // TODO: Throw if credential is not set.
+  if (!data.credentialId) {
+    await publish(
+      zhipuChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
+    throw new NonRetriableError("ZhiPu node: No credential configured.");
+  }
+  const credential = await step.run("get-credential", () => {
+    return prisma.credential.findUniqueOrThrow({
+      where: {
+        id: data.credentialId,
+      },
+    });
+  });
+  if (!credential?.value) {
+    await publish(
+      zhipuChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
+    throw new NonRetriableError("ZhiPu node: Credential not found.");
+  }
   if (!data.userPrompt) {
     await publish(
       zhipuChannel().status({
@@ -65,14 +95,10 @@ export const zhipuExecutor: NodeExecutor<ZhiPuData> = async ({
     ? Handlebars.compile(data.systemPrompt)(context)
     : "You are a helpful assistant.";
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
-  // TODO: Fetch credential from user selected.
-  // const credentialValue = process.env.ZHIPU_API_KEY;
-  // const zhipu = createZhipu({
-  //   apiKey: credentialValue,
-  // });
+  const apiKey = credential.value || process.env.ZHIPU_API_KEY;
   const zhipu = createOpenAI({
     baseURL: "https://open.bigmodel.cn/api/paas/v4",
-    apiKey: process.env.ZHIPU_API_KEY,
+    apiKey,
   });
   try {
     const { steps } = await step.ai.wrap("zhipu-generate-text", generateText, {

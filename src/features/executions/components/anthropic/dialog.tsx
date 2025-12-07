@@ -27,11 +27,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useCredentialsByType } from "@/features/credentials/hooks/use-credentials";
+import { CredentialType } from "@/generated/prisma/enums";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-export const AVAILABLE_MODELS = ["claude-haiku-4-5", "claude-sonnet-4-5"] as const;
+export const AVAILABLE_MODELS = [
+  "claude-haiku-4-5",
+  "claude-sonnet-4-5",
+] as const;
 
 const formSchema = z.object({
   variableName: z
@@ -42,6 +48,7 @@ const formSchema = z.object({
         "Invalid variable name, variable name must start with a letter or underscore and contain only letters, numbers, and underscores",
     }),
   model: z.enum(AVAILABLE_MODELS),
+  credentialId: z.string().min(1, "Credential ID is required"),
   systemPrompt: z.string().optional(),
   userPrompt: z.string().min(1, "User prompt is required"),
 });
@@ -61,11 +68,15 @@ export const AnthropicDialog = ({
   onSubmit,
   defaultValues = {},
 }: props) => {
+  const { data: credentials, isLoading: isLoadingCredentials } =
+    useCredentialsByType(CredentialType.ANTHROPIC);
+
   const form = useForm<AnthropicValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       variableName: defaultValues?.variableName || "",
       model: defaultValues?.model || AVAILABLE_MODELS[0],
+      credentialId: defaultValues?.credentialId || "",
       systemPrompt: defaultValues?.systemPrompt || "",
       userPrompt: defaultValues?.userPrompt || "",
     },
@@ -82,6 +93,7 @@ export const AnthropicDialog = ({
       form.reset({
         variableName: defaultValues?.variableName || "",
         model: defaultValues?.model || AVAILABLE_MODELS[0],
+        credentialId: defaultValues?.credentialId || "",
         systemPrompt: defaultValues?.systemPrompt || "",
         userPrompt: defaultValues?.userPrompt || "",
       });
@@ -152,6 +164,43 @@ export const AnthropicDialog = ({
                   <FormDescription>
                     The Google Anthropic model to use for completion.
                   </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="credentialId"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Anthropic Credential</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    disabled={isLoadingCredentials || !credentials?.length}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a credential" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {credentials?.map((option) => (
+                        <SelectItem
+                          key={option.id}
+                          value={option.id}
+                        >
+                          <div className="flex items-center gap-2">
+                            <Image
+                              src="/logos/anthropic.svg"
+                              alt="Anthropic"
+                              width={16}
+                              height={16}
+                            />
+                            {option.name}
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

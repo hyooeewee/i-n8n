@@ -12,11 +12,11 @@ import {
   LoadingView,
 } from "@/components/entity-components";
 import type { Workflow } from "@/generated/prisma/client";
+import { useEntitySearch } from "@/hooks/use-entity-search";
 import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
 import { formatDistanceToNow } from "date-fns";
 import { WorkflowIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEntitySearch } from "../hooks/use-entity-search";
 import {
   useCreateWorkflow,
   useRemoveWorkflow,
@@ -29,8 +29,8 @@ export const WorkflowsList = () => {
   return (
     <EntityList
       items={workflows.data.items}
-      getKey={workflow => workflow.id}
-      renderItem={workflow => <WorkflowsItem data={workflow} />}
+      getKey={(workflow) => workflow.id}
+      renderItem={(workflow) => <WorkflowsItem data={workflow} />}
       emptyView={<WorkflowsEmpty />}
     />
   );
@@ -41,10 +41,10 @@ export const WorkflowsHeader = ({ disabled }: { disabled?: boolean }) => {
   const { handleError, modal } = useUpgradeModal();
   const handleCreate = () => {
     createWorkflow.mutate(undefined, {
-      onSuccess: data => {
+      onSuccess: (data) => {
         router.push(`/workflows/${data.id}`);
       },
-      onError: error => {
+      onError: (error) => {
         handleError(error);
       },
     });
@@ -54,7 +54,7 @@ export const WorkflowsHeader = ({ disabled }: { disabled?: boolean }) => {
       {modal}
       <EntityHeader
         title="Workflows"
-        description="create and manage your workflows"
+        description="Create and manage your workflows"
         newButtonLabel="New Workflow"
         disabled={disabled}
         isCreating={createWorkflow.isPending}
@@ -86,7 +86,7 @@ export const WorkflowsPagination = () => {
     <EntityPagination
       page={data.page}
       totalPages={data.totalPages}
-      onPageChange={page => setParams({ ...params, page })}
+      onPageChange={(page) => setParams({ ...params, page })}
       disabled={isFetching}
     />
   );
@@ -122,10 +122,10 @@ export const WorkflowsEmpty = () => {
   const { handleError, modal } = useUpgradeModal();
   const handleCreate = () => {
     createWorkflow.mutate(undefined, {
-      onError: error => {
+      onError: (error) => {
         handleError(error);
       },
-      onSuccess: data => {
+      onSuccess: (data) => {
         router.push(`/workflows/${data.id}`);
       },
     });
@@ -134,7 +134,7 @@ export const WorkflowsEmpty = () => {
     <>
       {modal}
       <EmptyView
-        message="You haven't created any workflows yet. get started by creating your first workflow."
+        message="You haven't created any workflows yet. Get started by creating your first workflow."
         onNew={handleCreate}
       />
     </>

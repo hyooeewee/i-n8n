@@ -73,9 +73,21 @@ const executionNodes: NodeTypeOption[] = [
   },
   {
     type: NodeType.ZHIPU,
-    label: "Zhipu",
+    label: "ZhiPu",
     description: "Use Zhipu AI to generate content.",
     icon: "/logos/zhipu.svg",
+  },
+  {
+    type: NodeType.DISCORD,
+    label: "Discord",
+    description: "Send a message to discord.",
+    icon: "/logos/discord.svg",
+  },
+  {
+    type: NodeType.SLACK,
+    label: "Slack",
+    description: "Send a message to slack.",
+    icon: "/logos/slack.svg",
   },
 ];
 
@@ -120,6 +132,7 @@ export const NodeSelector = ({
           position: flowPosition,
           data: {},
         };
+        console.log("newNode", newNode);
         if (hasInitialNode) return [newNode];
         return [...nodes, newNode];
       });

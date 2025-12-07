@@ -41,21 +41,21 @@ export const Editor = ({ id }: { id: string }) => {
   const [edges, setEdges] = useState<Edge[]>(data.edges);
   const onNodesChange = useCallback(
     (changes: NodeChange[]) =>
-      setNodes(nodesSnapshot => applyNodeChanges(changes, nodesSnapshot)),
+      setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
     []
   );
   const onEdgesChange = useCallback(
     (changes: EdgeChange[]) =>
-      setEdges(edgesSnapshot => applyEdgeChanges(changes, edgesSnapshot)),
+      setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
     []
   );
   const onConnect = useCallback(
     (params: Connection) =>
-      setEdges(edgesSnapshot => addEdge(params, edgesSnapshot)),
+      setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
     []
   );
   const hasManualTrigger = useMemo(
-    () => nodes.some(node => node.type === NodeType.MANUAL_TRIGGER),
+    () => nodes.some((node) => node.type === NodeType.MANUAL_TRIGGER),
     [nodes]
   );
   return (
@@ -70,7 +70,7 @@ export const Editor = ({ id }: { id: string }) => {
         onInit={setEditor}
         fitView
         snapGrid={[10, 10]}
-        snapToGrid
+        // snapToGrid
         panOnScroll
         panOnDrag={false}
         selectionOnDrag

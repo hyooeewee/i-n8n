@@ -120,6 +120,8 @@ enum NodeType {
   GEMINI
   ANTHROPIC
   ZHIPU
+  DISCORD
+  SLACK
 }
 
 enum CredentialType { 

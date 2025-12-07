@@ -25,6 +25,7 @@ export type OpenAiData = {
 };
 
 export const openaiExecutor: NodeExecutor<OpenAiData> = async ({
+  userId,
   data,
   nodeId,
   context,
@@ -55,9 +56,19 @@ export const openaiExecutor: NodeExecutor<OpenAiData> = async ({
     );
     throw new NonRetriableError("OpenAi node: No model configured.");
   }
+  if (!data.credentialId) {
+    await publish(
+      openaiChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
+    throw new NonRetriableError("OpenAi node: No credential configured.");
+  }
   const credential = await step.run("get-credential", () => {
     return prisma.credential.findUniqueOrThrow({
       where: {
+        userId,
         id: data.credentialId,
       },
     });

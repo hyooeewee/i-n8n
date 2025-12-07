@@ -27,6 +27,7 @@ export type ZhiPuData = {
 };
 
 export const zhipuExecutor: NodeExecutor<ZhiPuData> = async ({
+  userId,
   data,
   nodeId,
   context,
@@ -69,6 +70,7 @@ export const zhipuExecutor: NodeExecutor<ZhiPuData> = async ({
   const credential = await step.run("get-credential", () => {
     return prisma.credential.findUniqueOrThrow({
       where: {
+        userId,
         id: data.credentialId,
       },
     });

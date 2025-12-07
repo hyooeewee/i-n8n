@@ -1,5 +1,6 @@
 import { NodeExecutor } from "@/features/executions/types";
 import { openaiChannel } from "@/inngest/channels/openai";
+import prisma from "@/lib/db";
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import Handlebars from "handlebars";
@@ -7,14 +8,18 @@ import { NonRetriableError } from "inngest";
 import { AVAILABLE_MODELS } from "./dialog";
 
 Handlebars.registerHelper("json", (context) => {
-  const jsonString = JSON.stringify(context, null, 2);
-  const safeString = new Handlebars.SafeString(jsonString);
-  return safeString;
+  try {
+    const jsonString = JSON.stringify(context, null, 2);
+    return new Handlebars.SafeString(jsonString);
+  } catch (error) {
+    console.error("Failed to serialize: " + error);
+  }
 });
 
 export type OpenAiData = {
   variableName?: string;
   model?: (typeof AVAILABLE_MODELS)[number];
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };
@@ -50,7 +55,22 @@ export const openaiExecutor: NodeExecutor<OpenAiData> = async ({
     );
     throw new NonRetriableError("OpenAi node: No model configured.");
   }
-  // TODO: Throw if credential is not set.
+  const credential = await step.run("get-credential", () => {
+    return prisma.credential.findUniqueOrThrow({
+      where: {
+        id: data.credentialId,
+      },
+    });
+  });
+  if (!credential?.value) {
+    await publish(
+      openaiChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
+    throw new NonRetriableError("OpenAi node: Credential not found.");
+  }
   if (!data.userPrompt) {
     await publish(
       openaiChannel().status({
@@ -64,11 +84,8 @@ export const openaiExecutor: NodeExecutor<OpenAiData> = async ({
     ? Handlebars.compile(data.systemPrompt)(context)
     : "You are a helpful assistant.";
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
-  // TODO: Fetch credential from user selected.
-  const credentialValue = process.env.OPENAI_API_KEY;
-  const openai = createOpenAI({
-    apiKey: credentialValue,
-  });
+  const apiKey = credential.value || process.env.OPENAI_API_KEY;
+  const openai = createOpenAI({ apiKey });
   try {
     const { steps } = await step.ai.wrap("openai-generate-text", generateText, {
       model: openai(data.model || AVAILABLE_MODELS[0]),

@@ -11,6 +11,7 @@ import { AVAILABLE_MODELS, ZhiPuDialog, ZhiPuValues } from "./dialog";
 type ZhiPuNodeData = {
   variableName?: string;
   model?: (typeof AVAILABLE_MODELS)[number];
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };

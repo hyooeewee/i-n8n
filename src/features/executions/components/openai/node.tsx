@@ -11,6 +11,7 @@ import { AVAILABLE_MODELS, OpenAiDialog, OpenAiValues } from "./dialog";
 type OpenAiNodeData = {
   variableName?: string;
   model?: (typeof AVAILABLE_MODELS)[number];
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };

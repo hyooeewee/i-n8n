@@ -1,5 +1,6 @@
 import { NodeExecutor } from "@/features/executions/types";
 import { geminiChannel } from "@/inngest/channels/gemini";
+import prisma from "@/lib/db";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 import Handlebars from "handlebars";
@@ -11,14 +12,14 @@ Handlebars.registerHelper("json", (context) => {
     const jsonString = JSON.stringify(context, null, 2);
     return new Handlebars.SafeString(jsonString);
   } catch (error) {
-    return new Handlebars.SafeString(
-      JSON.stringify({ error: "Failed to serialize" })
-    );
+    console.error("Failed to serialize: " + error);
   }
 });
+
 export type GeminiData = {
   variableName?: string;
   model?: (typeof AVAILABLE_MODELS)[number];
+  credentialId?: string;
   systemPrompt?: string;
   userPrompt?: string;
 };
@@ -54,7 +55,15 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
     );
     throw new NonRetriableError("Gemini node: No model configured.");
   }
-  // TODO: Throw if credential is not set.
+  if (!data.credentialId) {
+    await publish(
+      geminiChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
+    throw new NonRetriableError("Gemini node: No credential id configured.");
+  }
   if (!data.userPrompt) {
     await publish(
       geminiChannel().status({
@@ -68,12 +77,26 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
     ? Handlebars.compile(data.systemPrompt)(context)
     : "You are a helpful assistant.";
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
-  // TODO: Fetch credential from user selected.
-  const credentialValue = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-  const google = createGoogleGenerativeAI({
-    apiKey: credentialValue,
-  });
+
   try {
+    const credential = await step.run("get-credential", () => {
+      return prisma.credential.findUniqueOrThrow({
+        where: {
+          id: data.credentialId,
+        },
+      });
+    });
+    if (!credential?.value) {
+      await publish(
+        geminiChannel().status({
+          nodeId,
+          status: "error",
+        })
+      );
+      throw new NonRetriableError("Gemini node: Credential not found.");
+    }
+    const apiKey = credential.value || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+    const google = createGoogleGenerativeAI({ apiKey });
     const { steps } = await step.ai.wrap("gemini-generate-text", generateText, {
       model: google(data.model || AVAILABLE_MODELS[0]),
       system: systemPrompt,

@@ -1,3 +1,5 @@
+import { CredentialView } from "@/features/credentials/components/credential";
+import { prefetchCredential } from "@/features/credentials/server/prefetch";
 import { requireAuth } from "@/lib/auth-utils";
 
 interface PageProps {
@@ -7,7 +9,9 @@ interface PageProps {
 const Page = async ({ params }: PageProps) => {
   await requireAuth();
   const { id } = await params;
-  return <div>Credential ID: {id}</div>;
+  prefetchCredential(id);
+
+  return <CredentialView id={id} />;
 };
 
 export default Page;

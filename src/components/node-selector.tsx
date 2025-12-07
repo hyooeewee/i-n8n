@@ -73,9 +73,21 @@ const executionNodes: NodeTypeOption[] = [
   },
   {
     type: NodeType.ZHIPU,
-    label: "Zhipu",
+    label: "ZhiPu",
     description: "Use Zhipu AI to generate content.",
     icon: "/logos/zhipu.svg",
+  },
+  {
+    type: NodeType.DISCORD,
+    label: "Discord",
+    description: "Send a message to Discord.",
+    icon: "/logos/discord.svg",
+  },
+  {
+    type: NodeType.SLACK,
+    label: "Slack",
+    description: "Send a message to Slack.",
+    icon: "/logos/slack.svg",
   },
 ];
 

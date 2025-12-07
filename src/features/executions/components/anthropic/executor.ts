@@ -25,6 +25,7 @@ export type AnthropicData = {
 };
 
 export const anthropicExecutor: NodeExecutor<AnthropicData> = async ({
+  userId,
   data,
   nodeId,
   context,
@@ -55,9 +56,19 @@ export const anthropicExecutor: NodeExecutor<AnthropicData> = async ({
     );
     throw new NonRetriableError("Anthropic node: No model configured.");
   }
+  if (!data.credentialId) {
+    await publish(
+      anthropicChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
+    throw new NonRetriableError("Anthropic node: No credential configured.");
+  }
   const credential = await step.run("get-credential", () => {
     return prisma.credential.findUniqueOrThrow({
       where: {
+        userId,
         id: data.credentialId,
       },
     });

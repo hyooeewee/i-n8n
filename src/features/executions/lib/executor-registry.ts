@@ -8,6 +8,8 @@ import { googleFormTriggerExecutor } from "@/features/triggers/components/google
 import { manualTriggerExecutor } from "@/features/triggers/components/manual-trigger/executor";
 import { stripeTriggerExecutor } from "@/features/triggers/components/stripe-trigger/executor";
 import { NodeType } from "@/generated/prisma/enums";
+import { discordExecutor } from "../components/discord/executor";
+import { slackExecutor } from "../components/slack/executor";
 
 export const executorRegistry: Record<NodeType, NodeExecutor> = {
   [NodeType.INITIAL]: manualTriggerExecutor,
@@ -19,6 +21,8 @@ export const executorRegistry: Record<NodeType, NodeExecutor> = {
   [NodeType.OPENAI]: openaiExecutor,
   [NodeType.ANTHROPIC]: anthropicExecutor,
   [NodeType.ZHIPU]: zhipuExecutor,
+  [NodeType.DISCORD]: discordExecutor,
+  [NodeType.SLACK]: slackExecutor,
 };
 
 export const getExecutor = (type: NodeType): NodeExecutor => {

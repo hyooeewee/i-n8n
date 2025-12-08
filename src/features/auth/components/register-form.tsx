@@ -32,7 +32,7 @@ const registerSchema = z
     password: z.string().min(1, "Password is required"),
     confirmPassword: z.string(),
   })
-  .refine(data => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
@@ -60,13 +60,24 @@ const RegisterForm = () => {
         onSuccess: () => {
           router.push("/");
         },
-        onError: ctx => {
+        onError: (ctx) => {
           toast.error(ctx.error.message);
         },
       }
     );
   };
   const isPending = form.formState.isSubmitting;
+  const signInWith = async (provider: "google" | "github") => {
+    await authClient.signIn.social(
+      { provider },
+      {
+        onSuccess: () => router.push("/"),
+        onError: (ctx) => {
+          toast.error(`Something went wrong: ${ctx.error.message}`);
+        },
+      }
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -85,6 +96,7 @@ const RegisterForm = () => {
                     type="button"
                     variant="outline"
                     disabled={isPending}
+                    onClick={() => signInWith("github")}
                   >
                     <Image
                       src="/logos/github.svg"
@@ -99,6 +111,7 @@ const RegisterForm = () => {
                     type="button"
                     variant="outline"
                     disabled={isPending}
+                    onClick={() => signInWith("google")}
                   >
                     <Image
                       src="/logos/google.svg"

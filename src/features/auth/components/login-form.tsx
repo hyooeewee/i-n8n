@@ -52,13 +52,24 @@ const LoginForm = () => {
         onSuccess: () => {
           router.push("/");
         },
-        onError: ctx => {
+        onError: (ctx) => {
           toast.error(ctx.error.message);
         },
       }
     );
   };
   const isPending = form.formState.isSubmitting;
+  const signInWith = async (provider: "google" | "github") => {
+    await authClient.signIn.social(
+      { provider },
+      {
+        onSuccess: () => router.push("/"),
+        onError: (ctx) => {
+          toast.error(`Something went wrong: ${ctx.error.message}`);
+        },
+      }
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -77,6 +88,7 @@ const LoginForm = () => {
                     type="button"
                     variant="outline"
                     disabled={isPending}
+                    onClick={() => signInWith("github")}
                   >
                     <Image
                       src="/logos/github.svg"
@@ -91,6 +103,7 @@ const LoginForm = () => {
                     type="button"
                     variant="outline"
                     disabled={isPending}
+                    onClick={() => signInWith("google")}
                   >
                     <Image
                       src="/logos/google.svg"

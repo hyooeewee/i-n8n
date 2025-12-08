@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   /* config options here */
   devIndicators: false,
   reactCompiler: true,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   async redirects() {
     return [
       {

@@ -1,6 +1,7 @@
 import { NodeExecutor } from "@/features/executions/types";
 import { geminiChannel } from "@/inngest/channels/gemini";
 import prisma from "@/lib/db";
+import { decrypt } from "@/lib/encryption";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 import Handlebars from "handlebars";
@@ -95,7 +96,8 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
     );
     throw new NonRetriableError("Gemini node: Credential not found.");
   }
-  const apiKey = credential.value || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  const apiKey =
+    decrypt(credential?.value) || process.env.GOOGLE_GENERATIVE_AI_API_KEY;
   const google = createGoogleGenerativeAI({ apiKey });
   const { steps } = await step.ai.wrap("gemini-generate-text", generateText, {
     model: google(data.model || AVAILABLE_MODELS[0]),

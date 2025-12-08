@@ -26,14 +26,11 @@ import {
 } from "@/components/ui/select";
 import { CredentialType } from "@/generated/prisma/enums";
 import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
-// import { HydrateClient } from "@/trpc/server";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Select } from "@radix-ui/react-select";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-// import { Suspense } from "react";
-// import { ErrorBoundary } from "react-error-boundary";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import {
@@ -41,7 +38,6 @@ import {
   useSuspenseCredential,
   useUpdateCredential,
 } from "../hooks/use-credentials";
-// import { CredentialsError, CredentialsLoading } from "./credentials";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -236,18 +232,7 @@ export const CredentialForm = ({ initialData }: Props) => {
 
 export const CredentialView = ({ id }: { id: string }) => {
   const { data } = useSuspenseCredential(id);
+  const initialData = { ...data, value: "" };
 
-  return (
-    <div className="p-4 md:px-10 md:py-6 h-full">
-      <div className="mx-auto max-w-3xl w-full h-full flex flex-col gap-y-8">
-        {/* <HydrateClient>
-          <ErrorBoundary fallback={<CredentialsError />}>
-            <Suspense fallback={<CredentialsLoading />}> */}
-        <CredentialForm initialData={data} />
-        {/* </Suspense>
-          </ErrorBoundary>
-        </HydrateClient> */}
-      </div>
-    </div>
-  );
+  return <CredentialForm initialData={initialData} />;
 };

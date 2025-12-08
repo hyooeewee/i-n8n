@@ -1,6 +1,7 @@
 import { NodeExecutor } from "@/features/executions/types";
 import { openaiChannel } from "@/inngest/channels/openai";
 import prisma from "@/lib/db";
+import { decrypt } from "@/lib/encryption";
 import { createOpenAI } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import Handlebars from "handlebars";
@@ -95,7 +96,7 @@ export const openaiExecutor: NodeExecutor<OpenAiData> = async ({
     ? Handlebars.compile(data.systemPrompt)(context)
     : "You are a helpful assistant.";
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
-  const apiKey = credential?.value || process.env.OPENAI_API_KEY;
+  const apiKey = decrypt(credential?.value) || process.env.OPENAI_API_KEY;
   const openai = createOpenAI({ apiKey });
   try {
     const { steps } = await step.ai.wrap("openai-generate-text", generateText, {

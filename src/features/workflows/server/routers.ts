@@ -175,7 +175,6 @@ export const workflowsRouter = createTRPCRouter({
         edges,
       };
     }),
-  // TODO: add pagination
   findMany: protectedProcedure
     .input(
       z.object({

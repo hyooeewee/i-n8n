@@ -1,6 +1,7 @@
 import { NodeExecutor } from "@/features/executions/types";
 import { anthropicChannel } from "@/inngest/channels/anthropic";
 import prisma from "@/lib/db";
+import { decrypt } from "@/lib/encryption";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { generateText } from "ai";
 import Handlebars from "handlebars";
@@ -96,7 +97,7 @@ export const anthropicExecutor: NodeExecutor<AnthropicData> = async ({
     : "You are a helpful assistant.";
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
 
-  const apiKey = credential?.value || process.env.ANTHROPIC_API_KEY;
+  const apiKey = decrypt(credential?.value) || process.env.ANTHROPIC_API_KEY;
   const anthropic = createAnthropic({ apiKey });
   try {
     const { steps } = await step.ai.wrap(

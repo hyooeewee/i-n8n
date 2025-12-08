@@ -5,6 +5,7 @@ import Handlebars from "handlebars";
 import { NonRetriableError } from "inngest";
 // import { createZhipu } from "zhipu-ai-provider";
 import prisma from "@/lib/db";
+import { decrypt } from "@/lib/encryption";
 import { createOpenAI } from "@ai-sdk/openai";
 import { AVAILABLE_MODELS } from "./dialog";
 
@@ -97,7 +98,7 @@ export const zhipuExecutor: NodeExecutor<ZhiPuData> = async ({
     ? Handlebars.compile(data.systemPrompt)(context)
     : "You are a helpful assistant.";
   const userPrompt = Handlebars.compile(data.userPrompt)(context);
-  const apiKey = credential.value || process.env.ZHIPU_API_KEY;
+  const apiKey = decrypt(credential?.value) || process.env.ZHIPU_API_KEY;
   const zhipu = createOpenAI({
     baseURL: "https://open.bigmodel.cn/api/paas/v4",
     apiKey,

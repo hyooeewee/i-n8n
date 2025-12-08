@@ -18,7 +18,7 @@ import { NonRetriableError } from "inngest";
 export const executeWorkflow = inngest.createFunction(
   {
     id: "execute-workflow",
-    retries: 0,
+    retries: 0, // TODO: Remove this in production
     onFailure: async ({ event, step }) => {
       return prisma.execution.update({
         where: { inngestEventId: event.data.event.id },

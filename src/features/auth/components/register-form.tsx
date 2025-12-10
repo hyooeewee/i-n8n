@@ -1,5 +1,6 @@
 "use client";
 
+import { PasswordInput } from "@/components/password-input";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -147,7 +148,7 @@ const RegisterForm = () => {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input
+                          <PasswordInput
                             placeholder="password"
                             type="password"
                             {...field}
@@ -164,7 +165,7 @@ const RegisterForm = () => {
                       <FormItem>
                         <FormLabel>Confirm Password</FormLabel>
                         <FormControl>
-                          <Input
+                          <PasswordInput
                             placeholder="password"
                             type="password"
                             {...field}
@@ -178,11 +179,11 @@ const RegisterForm = () => {
                     className="w-full"
                     disabled={isPending}
                   >
-                    Sign up
+                    Sign up{isPending && "..."}
                   </Button>
                 </div>
                 <div className="text-center text-sm">
-                  Already have a account?&nbsp;
+                  {"Already have an account? "}
                   <Link
                     href="/login"
                     className="underline underline-offset-4"

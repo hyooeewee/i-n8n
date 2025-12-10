@@ -1,5 +1,6 @@
 "use client";
 
+import { PasswordInput } from "@/components/password-input";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -41,7 +42,6 @@ const LoginForm = () => {
     },
   });
   const onSubmit = async (values: loginFormValues) => {
-    console.log(values);
     await authClient.signIn.email(
       {
         email: values.email,
@@ -139,7 +139,7 @@ const LoginForm = () => {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input
+                          <PasswordInput
                             placeholder="password"
                             type="password"
                             {...field}
@@ -153,11 +153,11 @@ const LoginForm = () => {
                     className="w-full"
                     disabled={isPending}
                   >
-                    Login
+                    Login{isPending && "..."}
                   </Button>
                 </div>
                 <div className="text-center text-sm">
-                  Don&apos;t have a account?&nbsp;
+                  {"Don't have a account? "}
                   <Link
                     href="/signup"
                     className="underline underline-offset-4"
